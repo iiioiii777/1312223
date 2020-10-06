@@ -1,0 +1,83 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Player : MonoBehaviour
+{
+    public float viewRadius = 8.0f; // 代表視野最遠的距離 
+
+    public float viewAngleStep = 30; // 射線數量
+
+
+    // Start is called before the first frame update
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            transform.Rotate(new Vector3(0, -90, 0));
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            transform.Rotate(new Vector3(0, 90, 0));
+        }
+
+        if (Input.GetKey(KeyCode.W))
+        {
+            transform.Translate(Vector3.forward * 10 * Time.deltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.S))
+        {
+            transform.Translate(-Vector3.forward * 10 * Time.deltaTime);
+        }
+
+        DrawFieldOfView();
+    }
+
+    void DrawFieldOfView()
+    {
+        Vector3 forward_left = Quaternion.Euler(0, -45, 0) * transform.forward * viewRadius; // 最左邊那條線的向量 正前方-45度
+
+        for (int i = 0; i <= viewAngleStep; i++)
+        {
+            Vector3 v = Quaternion.Euler(0, (90.0f / viewAngleStep) * i, 0) * forward_left;
+
+            Vector3 pos = transform.position + v; //Player + v = 射線終點
+
+            //創建射線
+            Ray ray = new Ray(transform.position, v);
+            RaycastHit hitt = new RaycastHit();
+            //射線只與這兩層Layer碰撞
+            int mask = LayerMask.GetMask("Obstacle", "Enemy");
+
+            Physics.Raycast(ray, out hitt, viewRadius, mask);
+
+            if (hitt.transform != null)
+            {
+                pos = hitt.point;
+            }
+
+            if (hitt.transform != null && hitt.transform.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+
+            {
+                OnEnemySpotted(hitt.transform.gameObject);
+
+              
+            }
+
+            Debug.DrawLine(transform.position, pos, Color.red);
+        }
+    }
+    void OnEnemySpotted(GameObject enemy)
+    {
+        enemy.GetComponent<Enemy123>().spottedFrame = Time.frameCount;
+    }
+
+}
