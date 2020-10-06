@@ -1,0 +1,28 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Enemy123 : MonoBehaviour
+{
+    MeshRenderer meshRenderer;
+    //代表被發現時的貞數 (貞樹代表時間)
+    public int spottedFrame = -100;
+    // Start is called before the first frame update
+    void Start()
+    {
+        meshRenderer = GetComponent<MeshRenderer>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if(spottedFrame >= Time.frameCount-10)
+        {
+            meshRenderer.enabled = true;
+        }
+        else
+        {
+            meshRenderer.enabled = false;
+        }
+    }
+}
