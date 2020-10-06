@@ -1,0 +1,36 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+
+
+public class Playerai : MonoBehaviour
+{
+
+    public GameObject[] position;
+    public NavMeshAgent navagent;
+    public float time = 0;
+    
+    // Start is called before the first frame update
+    void Start()
+    {
+        navagent = GetComponent<NavMeshAgent>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        time += Time.deltaTime;
+        if(time>2)
+        {
+            pontrol();
+        }
+    }
+
+
+    void pontrol()
+    {
+        navagent.SetDestination(position[Random.Range(0, 10)].transform.position);
+        time = 0;
+    }
+}
